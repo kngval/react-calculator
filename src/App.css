@@ -23,7 +23,7 @@
 
 input[type=text] {
   width: 100%;
-  height: 3rem; /* Use consistent units */
+  height: 3rem;
   margin-bottom: 10px;
   background: #000;
   text-align: end;
@@ -31,11 +31,13 @@ input[type=text] {
 
 
 #display {
+  text-align: end;
+  font-size: 1.5rem;
   width: 100%;
   height: 10vh;
-  background: #2f0909;
+  background: rgb(29, 9, 47);
   margin-bottom: 10px;
-  text-align: end;
+  
 }
 
 button {
@@ -46,5 +48,5 @@ button {
 }
 
 .equals-button {
-  width: 75%; /* Example of a class selector */
+  width: 75%;
 }
