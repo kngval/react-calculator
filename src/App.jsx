@@ -1,70 +1,85 @@
 import './App.css';
 import React, { useState } from 'react';
+import { evaluate } from 'mathjs';
 
 function App() {
   const [input, setInput] = useState('');
-  const [output, setOutput] = useState('');
 
-  const handleOperator = (operator) => {
-    if (input) {
-      if (input[input.length - 1] === '-' && operator === '-') {
-        // Allow negative numbers but not multiple "-"
-        return;
-      }
-      setInput((prevInput) => prevInput + operator);
-    }
-  };
-
-  const handleEquals = () => {
+  const handleResult = () => {
     try {
-      const result = eval(input);
-      setOutput(result.toString());
+      const result = evaluate(input);
+      setInput(result.toString());
     } catch (error) {
-      setOutput('Error');
+      setInput('Error');
     }
-  };
-
-  const handleAllClear = () => {
-    setInput('');
-    setOutput('');
-  };
-
-  const handleClear = () => {
-    setInput((prevInput) => prevInput.slice(0, -1));
   };
 
   const handleNumber = (value) => {
-    if (value === '0' && input === '0') {
-      return;
-    }
+    setInput((prev) => (prev === '0' ? value : prev + value));
+  };
 
-    if (
-      (value === '0' && input.length === 0) ||
-      (value !== '0' && !isNaN(parseInt(value)))
-    ) {
-      setInput((prevInput) => prevInput + value);
-    }
+  const handleOperator = (operator) => {
+    setInput((prevInput) => {
+      const lastChar = prevInput.charAt(prevInput.length - 1);
+  
+      // Handle the case where the second operator is '-' to create a negative equation
+      if (lastChar === '-' && operator === '-') {
+        return prevInput; // Do nothing, maintain the current input
+      } else if (/[-+*/]$/.test(lastChar) && operator !== '-') {
+        // If the last character is an operator (excluding '-'), replace it with the new operator
+        return prevInput.slice(0, -1) + operator;
+      } else if (/[\d.]$/.test(lastChar) || (lastChar === '-' && !/[-+*/]$/.test(prevInput))) {
+        // If the last character is a digit, a decimal point, or the previous operator was a negative sign
+        return prevInput + operator;
+      } else if (operator === '-' && /[-+*/]$/.test(prevInput)) {
+        // Collapse consecutive operators into a single '-'
+        return prevInput + '-';
+      }
+  
+      return prevInput;
+    });
+  };
+  
+  
+
+  const handleSingleClear = () => {
+    setInput((prev) => prev.slice(0, -1));
+  };
+
+  const handleAllClear = () => {
+    setInput('0');
   };
 
   const handleDecimal = () => {
-    if (!input.includes('.') && input !== '' && !isNaN(input[input.length - 1])) {
-      setInput((prevInput) => prevInput + '.');
-    }
+    setInput((prev) => {
+      const lastChar = prev.charAt(prev.length - 1);
+
+      // Check for the last character to be a digit or an operator
+      if (/[\d+*/-]$/.test(lastChar)) {
+        // Check if there is already a decimal point in the last number
+        const lastNumberParts = prev.split(/[\+\-\*\/]/);
+        const lastNumber = lastNumberParts[lastNumberParts.length - 1];
+        if (!lastNumber.includes('.')) {
+          // If not, add a decimal point
+          return prev + '.';
+        }
+      }
+
+      return prev;
+    });
   };
 
   const handleClick = (value) => {
     if (value === '=') {
-      handleEquals();
+      handleResult();
     } else if (value === 'C') {
-      handleClear();
+      handleSingleClear();
     } else if (value === 'AC') {
       handleAllClear();
-    } else if (!isNaN(parseInt(value))) {
-      handleNumber(value);
     } else if (value === '.') {
       handleDecimal();
     } else {
-      handleOperator(value);
+      setInput((prev) => (prev === '0' ? value : prev + value));
     }
   };
 
@@ -72,7 +87,7 @@ function App() {
     <>
       <div className="container">
         <input type="text" readOnly value={input} />
-        <div id="display">{output || '0'}</div>
+        <div id="display">{input}</div>
 
         <div className="row">
           <button id="clear" onClick={() => handleClick('AC')}>

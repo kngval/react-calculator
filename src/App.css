@@ -1,6 +1,4 @@
-
-
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -16,23 +14,23 @@
   align-items: center;
 }
 
-.container{
+.container {
   background-color: #0b0c29;
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
 }
 
-input[type=text]{
+input[type=text] {
   width: 100%;
-  height: 3vh;
+  height: 3rem; /* Use consistent units */
   margin-bottom: 10px;
   background: #000;
   text-align: end;
 }
 
-#display{
+
+#display {
   width: 100%;
   height: 10vh;
   background: #2f0909;
@@ -40,14 +38,13 @@ input[type=text]{
   text-align: end;
 }
 
-
-button{
+button {
   background: transparent;
   width: 5rem;
   height: 4rem;
   font-size: 1.7rem;
 }
 
-#equals{
-  width: 75%;
+.equals-button {
+  width: 75%; /* Example of a class selector */
 }
